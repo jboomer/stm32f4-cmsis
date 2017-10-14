@@ -1,0 +1,10 @@
+*.o
+*.a
+*.hex
+*.bin
+*.elf
+*.swp
+*.pyc
+tags
+cscope.out
+.ycm_extra_conf.py
