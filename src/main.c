@@ -9,7 +9,6 @@ void delay_ms(uint32_t ms);
 int main()
 {
 
-
     /* Configure SysTick */
     SystemCoreClockUpdate();
     SysTick_Config(SystemCoreClock / 1000);

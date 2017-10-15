@@ -1,40 +1,50 @@
 # put your *.o targets here, make should handle the rest!
 
-SRCS = system_stm32f4xx.c main.c
+SRCS = src/system_stm32f4xx.c src/main.c
+ASRCS = src/startup_stm32f407.s # add startup file to build
 
 # all the files will be generated with this name (main.elf, main.bin, main.hex, etc)
 
 PROJ_NAME=blinky
 
-# Make sure st-flash is in your current path
-
-# that's it, no need to change anything below this line!
-
 ###################################################
 
-CC=arm-none-eabi-gcc
-OBJCOPY=arm-none-eabi-objcopy
+CROSS=arm-none-eabi-
+CC=$(CROSS)gcc
+CXX=$(CROSS)g++
+LD=$(CROSS)gcc
+AS=$(CROSS)gcc
+OBJCOPY=$(CROSS)objcopy
 
-CFLAGS  = -g -Wall -Tstm32_flash.ld 
-CFLAGS += -mlittle-endian -mthumb -mcpu=cortex-m4 -mthumb-interwork
-CFLAGS += -mfloat-abi=hard -mfpu=fpv4-sp-d16
+ARCHFLAGS = -mlittle-endian -mthumb -mcpu=cortex-m4 -mthumb-interwork
+ARCHFLAGS += -mfloat-abi=hard -mfpu=fpv4-sp-d16
+
+CFLAGS  = -g -Wall
+CFLAGS += $(ARCHFLAGS)
 CFLAGS += -O0
 
+LDFLAGS = -Tstm32_flash.ld  -specs=nosys.specs $(ARCHFLAGS)
+
 ###################################################
-
-vpath %.c src
-
-ROOT=$(shell pwd)
 
 CFLAGS += -Isrc -Isrc/core
-CFLAGS += -specs=nosys.specs
 CFLAGS += -DARM_MATH_CM4 -DSTM32F407xx
 
-SRCS += src/startup_stm32f407.s # add startup file to build
+CXXFLAGS = $(CFLAGS)
 
-OBJS = $(SRCS:.c=.o)
+
+OBJS = $(SRCS:.c=.o) $(ASRCS:.s=.o) $(CXXSRCS:.cpp=.o)
 
 ###################################################
+
+%.o: %.c
+	$(CC) $(CFLAGS) -o $@ -c $^
+
+%.o: %.s
+	$(AS) $(CFLAGS) -o $@ -c $^
+
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $^
 
 .PHONY: proj
 
@@ -42,7 +52,6 @@ all: proj
 
 again: clean all
 
-# Flash the STM32F4
 flash:
 	st-flash write $(PROJ_NAME).bin 0x8000000
 
@@ -52,13 +61,13 @@ ctags:
 
 proj: 	$(PROJ_NAME).elf
 
-$(PROJ_NAME).elf: $(SRCS)
-	$(CC) $(CFLAGS) $^ -o $@
+$(PROJ_NAME).elf: $(OBJS)
+	$(LD) $(LDFLAGS) $^ -o $@
 	$(OBJCOPY) -O ihex $(PROJ_NAME).elf $(PROJ_NAME).hex
 	$(OBJCOPY) -O binary $(PROJ_NAME).elf $(PROJ_NAME).bin
 
 clean:
-	rm -f *.o *.i
+	rm -f $(OBJS)
 	rm -f $(PROJ_NAME).elf
 	rm -f $(PROJ_NAME).hex
 	rm -f $(PROJ_NAME).bin
