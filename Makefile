@@ -1,7 +1,7 @@
-# put your *.o targets here, make should handle the rest!
 
-SRCS = src/system_stm32f4xx.c src/main.c
-ASRCS = src/startup_stm32f407.s # add startup file to build
+SRCS = src/system_stm32f4xx.c src/main.c src/systick.c
+ASRCS = src/startup_stm32f407.s
+CXXSRC = 
 
 # all the files will be generated with this name (main.elf, main.bin, main.hex, etc)
 
@@ -32,10 +32,9 @@ CFLAGS += -DARM_MATH_CM4 -DSTM32F407xx
 
 CXXFLAGS = $(CFLAGS)
 
+###################################################
 
 OBJS = $(SRCS:.c=.o) $(ASRCS:.s=.o) $(CXXSRCS:.cpp=.o)
-
-###################################################
 
 %.o: %.c
 	$(CC) $(CFLAGS) -o $@ -c $^

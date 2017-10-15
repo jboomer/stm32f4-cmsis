@@ -2,9 +2,9 @@
 #include <stdbool.h>
 
 #include "stm32f4xx.h"
+#include "systick.h"
 
-volatile uint32_t tick_ms;
-void delay_ms(uint32_t ms);
+static void initialize_gpio(void);
 
 int main()
 {
@@ -13,6 +13,20 @@ int main()
     SystemCoreClockUpdate();
     SysTick_Config(SystemCoreClock / 1000);
 
+    initialize_gpio();
+
+    while(true) {
+        /* Toggle LED */
+        GPIOD->ODR ^= GPIO_ODR_OD12;
+
+        delay_ms(500);
+    }
+
+    return 0;
+}
+
+static void initialize_gpio(void)
+{
     /* Enable peripheral clock */
     SET_BIT(RCC->AHB1ENR, RCC_AHB1ENR_GPIODEN_Msk);
 
@@ -30,24 +44,4 @@ int main()
 
     /* No Push/Pull */
     CLEAR_BIT(GPIOD->PUPDR, GPIO_PUPDR_PUPD12);
-
-    while(true) {
-        /* Toggle LED */
-        GPIOD->ODR ^= GPIO_ODR_OD12;
-
-        delay_ms(500);
-    }
-
-    return 0;
-}
-
-void delay_ms(uint32_t ms)
-{
-    uint32_t start = tick_ms;
-    while (tick_ms < start+ms);
-}
-
-void SysTick_Handler(void)
-{
-    tick_ms++;
 }
