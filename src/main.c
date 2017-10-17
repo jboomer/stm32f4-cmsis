@@ -8,11 +8,7 @@ static void initialize_gpio(void);
 
 int main()
 {
-
-    /* Configure SysTick */
-    SystemCoreClockUpdate();
-    SysTick_Config(SystemCoreClock / 1000);
-
+    systick_init();
     initialize_gpio();
 
     while(true) {
