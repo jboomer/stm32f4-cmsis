@@ -23,7 +23,7 @@ CFLAGS  = -g -Wall
 CFLAGS += $(ARCHFLAGS)
 CFLAGS += -O0
 
-LDFLAGS = -Tstm32_flash.ld  -specs=nosys.specs $(ARCHFLAGS)
+LDFLAGS = -Tstm32f407vg.ld  -specs=nosys.specs $(ARCHFLAGS) -nostartfiles
 
 ###################################################
 
