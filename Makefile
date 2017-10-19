@@ -1,6 +1,26 @@
 
-SRCS = src/system_stm32f4xx.c src/main.c src/systick.c
-ASRCS = src/startup_stm32f407.s
+SRCS = src/system/system_stm32f4xx.c src/main.c src/systick.c
+ASRCS = src/system/startup_stm32f407.s
+LLSRC  = src/ll/stm32f4xx_ll_tim.c
+LLSRC += src/ll/stm32f4xx_ll_rtc.c
+LLSRC += src/ll/stm32f4xx_ll_dma2d.c
+LLSRC += src/ll/stm32f4xx_ll_exti.c
+LLSRC += src/ll/stm32f4xx_ll_dac.c
+LLSRC += src/ll/stm32f4xx_ll_rng.c
+LLSRC += src/ll/stm32f4xx_ll_i2c.c
+LLSRC += src/ll/stm32f4xx_ll_gpio.c
+LLSRC += src/ll/stm32f4xx_ll_adc.c
+LLSRC += src/ll/stm32f4xx_ll_usart.c
+LLSRC += src/ll/stm32f4xx_ll_rcc.c
+LLSRC += src/ll/stm32f4xx_ll_crc.c
+LLSRC += src/ll/stm32f4xx_ll_dma.c
+LLSRC += src/ll/stm32f4xx_ll_lptim.c
+LLSRC += src/ll/stm32f4xx_ll_pwr.c
+LLSRC += src/ll/stm32f4xx_ll_utils.c
+LLSRC += src/ll/stm32f4xx_ll_spi.c
+
+SRCS += $(LLSRC)
+
 CXXSRC = 
 
 # all the files will be generated with this name (main.elf, main.bin, main.hex, etc)
@@ -27,8 +47,8 @@ LDFLAGS = -Tstm32f407vg.ld  -specs=nosys.specs $(ARCHFLAGS) -nostartfiles
 
 ###################################################
 
-CFLAGS += -Isrc -Isrc/core
-CFLAGS += -DARM_MATH_CM4 -DSTM32F407xx
+CFLAGS += -Isrc -Isrc/core -Isrc/system -Isrc/ll
+CFLAGS += -DARM_MATH_CM4 -DSTM32F407xx -DUSE_FULL_LL_DRIVER
 
 CXXFLAGS = $(CFLAGS)
 

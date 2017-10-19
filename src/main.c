@@ -4,6 +4,8 @@
 #include "stm32f4xx.h"
 #include "systick.h"
 
+#include "stm32f4xx_ll_gpio.h"
+
 static void initialize_gpio(void);
 
 int main()
@@ -13,7 +15,7 @@ int main()
 
     while(true) {
         /* Toggle LED */
-        GPIOD->ODR ^= GPIO_ODR_OD12;
+        LL_GPIO_TogglePin(GPIOD, LL_GPIO_PIN_12);
 
         delay_ms(500);
     }
@@ -23,21 +25,18 @@ int main()
 
 static void initialize_gpio(void)
 {
+    LL_GPIO_InitTypeDef initgpio;
+
+    LL_GPIO_StructInit(&initgpio);
+
+    initgpio.Pin = LL_GPIO_PIN_12;
+    initgpio.Mode = LL_GPIO_MODE_OUTPUT;
+    initgpio.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
+    initgpio.Speed = LL_GPIO_SPEED_FREQ_LOW;
+    initgpio.Pull = LL_GPIO_PULL_NO;
+
     /* Enable peripheral clock */
     SET_BIT(RCC->AHB1ENR, RCC_AHB1ENR_GPIODEN_Msk);
 
-    /* Reset mode */
-    CLEAR_BIT(GPIOD->MODER, GPIO_MODER_MODE12);
-
-    /* Set as output */
-    SET_BIT(GPIOD->MODER, GPIO_MODER_MODE12_0);
-
-    /* Set as push pull */
-    CLEAR_BIT(GPIOD->OTYPER, GPIO_OTYPER_OT12);
-
-    /* Set speed 100 MHz*/
-    SET_BIT(GPIOD->OSPEEDR, GPIO_OSPEEDR_OSPEED12);
-
-    /* No Push/Pull */
-    CLEAR_BIT(GPIOD->PUPDR, GPIO_PUPDR_PUPD12);
+    LL_GPIO_Init(GPIOD, &initgpio);
 }
