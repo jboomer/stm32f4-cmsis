@@ -1,5 +1,5 @@
 
-SRCS = src/system/system_stm32f4xx.c src/main.c src/systick.c
+SRCS = src/system/system_stm32f4xx.c src/main.c src/systick.c src/clock_config.c
 ASRCS = src/system/startup_stm32f407.s
 LLSRC  = src/ll/stm32f4xx_ll_tim.c
 LLSRC += src/ll/stm32f4xx_ll_rtc.c
